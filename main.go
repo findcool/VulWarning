@@ -55,7 +55,7 @@ func main() {
 	}
 
 	c := cron.New()
-	c.AddFunc("* */10 * * * *", func() {
+	c.AddFunc(conf.Server.Spec, func() {
 		logger.Println("Start Job...")
 		doJob()
 	})

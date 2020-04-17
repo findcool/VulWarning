@@ -7,3 +7,4 @@ mysql:
 pusher: https://open.feishu.cn/open-apis/bot/hook/$key
 server:
   debug: true
+  spec: "0 */10 * * * *"

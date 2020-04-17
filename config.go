@@ -18,7 +18,8 @@ type Config struct {
 	} `yaml:"mysql"`
 	Pusher string `yaml:"pusher"`
 	Server struct {
-		Debug bool `yaml:"debug"`
+		Debug bool   `yaml:"debug"`
+		Spec  string `yaml:"spec"`
 	} `yaml:"server"`
 }
 
