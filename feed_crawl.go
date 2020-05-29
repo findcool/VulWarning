@@ -13,6 +13,7 @@ type Items struct {
 	Title   string `gorm:"type:text" db:"title" json:"title"` // identify
 	Link    string `gorm:"type:text" db:"link" json:"link"`   // link
 	PubDate int64  `db:"pubdate" json:"pubdate"`              // pubdate
+	Desc    string `gorm:"type:text" json:"description"`      // description
 }
 
 var dateLayout = []string{
@@ -47,14 +48,14 @@ func (f *FeedCrawl) parsePubDate(s string) int64 {
 	return -1
 }
 
-func (f *FeedCrawl) parseFeed(target string) {
+func (f *FeedCrawl) parseFeed(target string) []*Items {
 	feed, err := f.fp.ParseURL(target)
 	if err != nil {
 		logger.Errorln(target, err)
-		return
+		return nil
 	}
 	logger.Debugln(feed.Title)
-	items := make([]*Items, 0)
+	items := make([]*Items, len(feed.Items))
 	for i, item := range feed.Items {
 		link := item.Link
 		if link == "" {
@@ -75,9 +76,11 @@ func (f *FeedCrawl) parseFeed(target string) {
 			Title:   item.Title,
 			Link:    link,
 			PubDate: pubDate,
+			Desc:    item.Description,
 		}
-		logger.Infoln(item.Title, link)
+		logger.Debugln(item.Title, link)
 	}
+	return items
 }
 
 func newFeedCrawl() *FeedCrawl {
