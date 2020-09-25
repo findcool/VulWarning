@@ -1,10 +1,11 @@
-package main
+package plugins
 
 import (
 	"net/http"
 	"time"
 
 	"github.com/mmcdole/gofeed"
+	"github.com/virink/vulWarning/common"
 )
 
 // Items - Items Database module
@@ -39,7 +40,8 @@ type FeedCrawl struct {
 	fp *gofeed.Parser
 }
 
-func (f *FeedCrawl) parsePubDate(s string) int64 {
+// ParsePubDate -
+func ParsePubDate(s string) int64 {
 	for _, layout := range dateLayout {
 		if stamp, err := time.ParseInLocation(layout, s, time.Local); err == nil {
 			return stamp.Unix()
@@ -51,10 +53,10 @@ func (f *FeedCrawl) parsePubDate(s string) int64 {
 func (f *FeedCrawl) parseFeed(target string) []*Items {
 	feed, err := f.fp.ParseURL(target)
 	if err != nil {
-		logger.Errorln(target, err)
+		common.Logger.Errorln(target, err)
 		return nil
 	}
-	logger.Debugln(feed.Title)
+	common.Logger.Debugln(feed.Title)
 	items := make([]*Items, len(feed.Items))
 	for i, item := range feed.Items {
 		link := item.Link
@@ -63,13 +65,13 @@ func (f *FeedCrawl) parseFeed(target string) []*Items {
 		}
 		var pubDate int64
 		for _, date := range []string{item.Published, item.Updated} {
-			pubDate = f.parsePubDate(date)
+			pubDate = ParsePubDate(date)
 			if pubDate != -1 {
 				break
 			}
 		}
 		if pubDate == -1 {
-			logger.Errorln("PubDate template error", item.Published, target)
+			common.Logger.Errorln("PubDate template error", item.Published, target)
 			pubDate = time.Now().Unix()
 		}
 		items[i] = &Items{
@@ -78,7 +80,7 @@ func (f *FeedCrawl) parseFeed(target string) []*Items {
 			PubDate: pubDate,
 			Desc:    item.Description,
 		}
-		logger.Debugln(item.Title, link)
+		common.Logger.Debugln(item.Title, link)
 	}
 	return items
 }

@@ -1,20 +1,22 @@
-package main
+package plugins
 
 import (
 	"strings"
 	"time"
 
 	"github.com/gocolly/colly"
+	"github.com/virink/vulWarning/common"
+	"github.com/virink/vulWarning/model"
 )
 
 // PluginAliyun -
 type PluginAliyun struct {
 	c   *colly.Collector
-	res []*Warings
+	res []*model.Warning
 }
 
 // Result -
-func (p *PluginAliyun) Result() []*Warings {
+func (p *PluginAliyun) Result() []*model.Warning {
 	return p.res
 }
 
@@ -23,7 +25,7 @@ func (p *PluginAliyun) Crawl() error {
 	p.c = newCustomCollector([]string{"help.aliyun.com"})
 
 	p.c.OnRequest(func(r *colly.Request) {
-		logger.Debugln("Crawling [Aliyun]", r.URL)
+		common.Logger.Debugln("Crawling [Aliyun]", r.URL)
 	})
 
 	p.c.OnHTML("div#se-knowledge", func(e *colly.HTMLElement) {
@@ -50,7 +52,7 @@ func (p *PluginAliyun) Crawl() error {
 			_time := e.ChildText("span")
 			_time = _time[:len(_time)-8]
 
-			p.res = append(p.res, &Warings{
+			p.res = append(p.res, &model.Warning{
 				Title:    title,
 				Link:     link,
 				From:     "aliyun",
@@ -58,7 +60,7 @@ func (p *PluginAliyun) Crawl() error {
 				CreateAt: time.Now(),
 			})
 			p.c.Visit(link)
-			logger.Debugln("Crwaled [Aliyun]", title, _time)
+			common.Logger.Debugln("Crwaled [Aliyun]", title, _time)
 		}
 	})
 	p.c.Visit("https://help.aliyun.com/noticelist/9213612.html")

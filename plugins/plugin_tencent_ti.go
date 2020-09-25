@@ -1,20 +1,22 @@
-package main
+package plugins
 
 import (
 	"strings"
 	"time"
 
 	"github.com/gocolly/colly"
+	"github.com/virink/vulWarning/common"
+	"github.com/virink/vulWarning/model"
 )
 
 // PluginTencentTi -
 type PluginTencentTi struct {
 	c   *colly.Collector
-	res []*Warings
+	res []*model.Warning
 }
 
 // Result -
-func (p *PluginTencentTi) Result() []*Warings {
+func (p *PluginTencentTi) Result() []*model.Warning {
 	return p.res
 }
 
@@ -23,12 +25,12 @@ func (p *PluginTencentTi) Crawl() error {
 	p.c = newCustomCollector([]string{"security.tencent.com"})
 
 	p.c.OnRequest(func(r *colly.Request) {
-		logger.Debugln("Crawling [TencentTi]", r.URL)
+		common.Logger.Debugln("Crawling [TencentTi]", r.URL)
 	})
 
 	p.c.OnHTML("div.user_body", func(e *colly.HTMLElement) {
 		title := e.ChildText("h2.body_title")
-		logger.Debugln(title)
+		common.Logger.Debugln(title)
 		_time := e.ChildText("div.content_rightblock > p.content_time > span")
 		desc := ""
 		e.ForEach("div.body_block-detail", func(i int, ex *colly.HTMLElement) {
@@ -37,7 +39,7 @@ func (p *PluginTencentTi) Crawl() error {
 			}
 		})
 
-		p.res = append(p.res, &Warings{
+		p.res = append(p.res, &model.Warning{
 			Title:    title,
 			Link:     e.Request.URL.String(),
 			From:     "tencent_ti",
