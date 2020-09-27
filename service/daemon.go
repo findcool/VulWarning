@@ -8,12 +8,12 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/takama/daemon"
-	"github.com/virink/vulWarning/common"
-	"github.com/virink/vulWarning/model"
-	"github.com/virink/vulWarning/plugins"
+	"github.com/virink/vulwarning/common"
+	"github.com/virink/vulwarning/model"
+	"github.com/virink/vulwarning/plugins"
 )
 
 // Service has embedded daemon

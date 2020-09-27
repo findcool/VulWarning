@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/virink/vulWarning/common"
-	"github.com/virink/vulWarning/model"
+	"github.com/virink/vulwarning/common"
+	"github.com/virink/vulwarning/model"
 )
 
 // DingdingData -

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/mmcdole/gofeed"
-	"github.com/virink/vulWarning/common"
+	"github.com/virink/vulwarning/common"
 )
 
 // Items - Items Database module

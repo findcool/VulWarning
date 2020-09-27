@@ -1,9 +1,17 @@
 # Vul Warnings
 
+## News
+
 - [x] Aliyun
 - [x] Cert360
 - [x] TencentTI
 - [x] GitHub CVE Search
+
+## Pusher
+
+- [x] Feishu 飞书
+- [x] Qiwei 企业微信
+- [x] Dingding 钉钉
 
 ## Usage
 
@@ -30,6 +38,8 @@ Modify the `config.yaml` in the path of binary file.
 
 **Example:** `example.config.yaml`
 
+[CRON Expression Format](#cron-expression-format)
+
 ### Step 3 : Init Database
 
 Init Database and Run First Crawl without pushing message.
@@ -49,6 +59,18 @@ Have a good time~ `./vulwarning start`
 ### Debug Mode
 
 You can open Debug Mode by `config.yaml` or setenv DEBUG=1
+
+### CRON Expression Format
+
+https://pkg.go.dev/github.com/robfig/cron/v3#hdr-CRON_Expression_Format
+
+| Field name   | Mandatory? | Allowed values  | Allowed special characters |
+| ------------ | ---------- | --------------- | -------------------------- |
+| Minutes      | Yes        | 0-59            | * / , -                    |
+| Hours        | Yes        | 0-23            | * / , -                    |
+| Day of month | Yes        | 1-31            | * / , - ?                  |
+| Month        | Yes        | 1-12 or JAN-DEC | * / , -                    |
+| Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?                  |
 
 ## LICENSE
 

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/virink/vulWarning/common"
+	"github.com/virink/vulwarning/common"
 
 	// mysql driver
 	_ "github.com/go-sql-driver/mysql"

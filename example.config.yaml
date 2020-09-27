@@ -14,4 +14,4 @@ pusher:
   custom: ""
 server:
   debug: true
-  spec: "* */10 * * * *"
+  spec: "*/10 * * * *"

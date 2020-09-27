@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"github.com/virink/vulWarning/model"
+	"github.com/virink/vulwarning/model"
 )
 
 // Plugin -

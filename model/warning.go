@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/virink/vulWarning/common"
+	"github.com/virink/vulwarning/common"
 )
 
 // PushData -

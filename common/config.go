@@ -46,7 +46,7 @@ func TemplateConfig() []byte {
 	conf.Pusher.Feishu = "fb9b5f1a04ac4305a7da1axxxxxxxxxx"
 
 	conf.Server.Debug = true
-	conf.Server.Spec = "* */10 * * * *"
+	conf.Server.Spec = "*/10 * * * *"
 
 	// yamlData
 	data, err := yaml.Marshal(conf)
