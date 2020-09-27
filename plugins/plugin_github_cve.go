@@ -25,7 +25,7 @@ type GithubSearchResult struct {
 		CreatedAt   string `json:"created_at"`
 		FullName    string `json:"full_name"`
 		Name        string `json:"name"`
-		URL         string `json:"url"`
+		SvnURL      string `json:"svn_url"`
 	} `json:"items"`
 	TotalCount int64 `json:"total_count"`
 }
@@ -78,7 +78,7 @@ func (p *PluginGithubCVE) Crawl() error {
 	for _, item := range gsr.Items {
 		var CVE, CVSS, DESC string
 		// Is Exists
-		if model.WarningIsExistsByLink(item.URL) {
+		if model.WarningIsExistsByLink(item.SvnURL) {
 			continue
 		}
 		// Get CVE Detail
@@ -101,8 +101,8 @@ func (p *PluginGithubCVE) Crawl() error {
 		)
 		p.res = append(p.res, &model.Warning{
 			Title:    fmt.Sprintf("Found [%s] on GitHub", CVE),
-			Link:     item.URL,
-			Index:    item.URL,
+			Link:     item.SvnURL,
+			Index:    item.SvnURL,
 			From:     "githubcve",
 			Desc:     text,
 			Time:     time.Unix(ParsePubDate(item.UpdatedAt), 0),

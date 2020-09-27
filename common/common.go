@@ -10,7 +10,7 @@ const (
 	// Description -
 	Description = "VulWarning"
 	// Version -
-	Version = "0.1.2"
+	Version = "0.1.3"
 	// ConfigFile -
 	ConfigFile = "config.yaml"
 	// LogFile -
