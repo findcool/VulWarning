@@ -61,3 +61,12 @@ clean:
 	@rm -rf ${TARGET}/* ; \
 	go clean ./... ; \
 	echo "Done."
+
+
+archive: linux darwin
+	cd ${TARGET}; \
+	echo "[+] Archive ${APPNAME} ..." ; \
+	sha256sum ${APPNAME}* > SHA256.txt; \
+	for n in $$(ls ${APPNAME}*); do \
+		zip $${n}.zip -9 $${n}; \
+	done;

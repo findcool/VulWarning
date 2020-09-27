@@ -42,7 +42,7 @@ func (p *PluginQianxinTi) Crawl() error {
 		desc := e.ChildText("div.text-box > div.brief")
 		p.res = append(p.res, &model.Warning{
 			Title:    title,
-			Link:     fmt.Sprintf(`%s?404=%s`, e.Request.URL.String(), MD5(e.Request.URL.String())),
+			Link:     fmt.Sprintf(`%s?404=%s`, e.Request.URL.String(), MD5(title)),
 			Desc:     desc,
 			From:     "qianxin_ti",
 			Time:     getTime("2006-01-02", _time),
