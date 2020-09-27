@@ -177,7 +177,7 @@ func DoJob(push bool) {
 			continue
 		}
 		for _, warn := range p.Result() {
-			if model.AddWarning(warn) == nil {
+			if model.AddWarning(warn) {
 				if push {
 					PusherMessage(makePushMessage(warn))
 				}

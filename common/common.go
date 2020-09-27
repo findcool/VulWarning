@@ -6,11 +6,11 @@ import (
 
 const (
 	// ServiceName -
-	ServiceName = "Tiku"
+	ServiceName = "VulWarning"
 	// Description -
-	Description = "Tiku @Venom"
+	Description = "VulWarning"
 	// Version -
-	Version = "0.1.1"
+	Version = "0.1.2"
 	// ConfigFile -
 	ConfigFile = "config.yaml"
 	// LogFile -

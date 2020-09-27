@@ -1,0 +1,17 @@
+mysql:
+  host: 127.0.0.1
+  user: root
+  pass: "123456"
+  name: vulwarning
+  charset: utf8mb4
+  prefix: ""
+pusher:
+  qiwei: ""
+  dingding: ""
+  dingding_sign: ""
+  feishu: fb9b5f1a04ac4305a7da1axxxxxxxxxx
+  feishu_v2: ""
+  custom: ""
+server:
+  debug: true
+  spec: "* 10/* * * *"

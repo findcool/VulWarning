@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"syscall"
 
 	"github.com/robfig/cron"
@@ -78,7 +79,11 @@ func init() {
 
 // Entry -
 func Entry() {
-	srv, err := daemon.New(common.ServiceName, common.Description, daemon.UserAgent)
+	kind := daemon.UserAgent
+	if runtime.GOOS != "darwin" {
+		kind = daemon.SystemDaemon
+	}
+	srv, err := daemon.New(common.ServiceName, common.Description, kind)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return
@@ -147,18 +152,18 @@ func serviceDaemon() (string, error) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
 
-	if common.DebugMode {
+	// if common.DebugMode {
 
-		// 	p := &model.PushData{
-		// 		Title: "test",
-		// 		Text:  "just for test\npusher",
-		// 	}
-		// 	plugins.PusherMessage(p)
+	// 	// 	p := &model.PushData{
+	// 	// 		Title: "test",
+	// 	// 		Text:  "just for test\npusher",
+	// 	// 	}
+	// 	// 	plugins.PusherMessage(p)
 
-		plugins.DoJob(false)
+	// 	plugins.DoJob(false)
 
-		return "Finish Debug", nil
-	}
+	// 	return "Finish Debug", nil
+	// }
 
 	c := cron.New()
 	c.AddFunc(config.Server.Spec, func() {

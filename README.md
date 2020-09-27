@@ -26,6 +26,10 @@ Modify the `config.yaml` in the path of binary file.
 2. And you can save it. `./vulwarning config > config.yaml`
 3. Write anything you want.
 
+**pusher config:** Just push message to which you set key
+
+**Example:** `example.config.yaml`
+
 ### Step 3 : Init Database
 
 Init Database and Run First Crawl without pushing message.

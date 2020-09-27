@@ -38,14 +38,15 @@ func WarningIsExistsByLink(link string) bool {
 }
 
 // AddWarning -
-func AddWarning(w *Warning) (err error) {
+func AddWarning(w *Warning) bool {
 	if !WarningIsExistsByLink(w.Link) {
-		if err = db.Create(w).Error; err != nil {
-			common.Logger.Errorln(err)
-			return err
+		stmt := db.Create(w)
+		if stmt.Error != nil {
+			common.Logger.Errorln(stmt.Error)
 		}
+		return stmt.RowsAffected > 0
 	}
-	return nil
+	return false
 }
 
 // UpdateWarning -
