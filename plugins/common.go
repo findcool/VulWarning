@@ -145,8 +145,9 @@ func httpPostJSON(target string, data []byte) (err error) {
 // PusherMessage -
 func PusherMessage(p *model.PushData) {
 	var wg = &sync.WaitGroup{}
-	wg.Add(3)
+	wg.Add(4)
 	go PushToFeishu(wg, p)
+	go PushToFeishuV2(wg, p)
 	go PushToQiwei(wg, p)
 	go PushToDingding(wg, p)
 	wg.Wait()
