@@ -74,12 +74,11 @@ func newFeishuDataV2(p *model.PushDataV2) []byte {
 	}
 	s.Content.Post.ZhCn.Content = append(s.Content.Post.ZhCn.Content,
 		[]Content{
-			Content{Tag: "text", Text: "详情:"},
+			Content{Tag: "text", Text: "详情: "},
 			Content{Tag: "a", Text: "点击查看", Href: p.Link},
 		},
 		[]Content{
-			Content{Tag: "text", Text: "描述:"},
-			Content{Tag: "text", Text: p.Desc},
+			Content{Tag: "text", Text: fmt.Sprintf(`描述: %s`, p.Desc)},
 		},
 	)
 	data, err := json.Marshal(&s)
