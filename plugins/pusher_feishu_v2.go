@@ -77,7 +77,10 @@ func newFeishuDataV2(p *model.PushDataV2) []byte {
 			Content{Tag: "text", Text: "详情:"},
 			Content{Tag: "a", Text: "点击查看", Href: p.Link},
 		},
-		[]Content{Content{Tag: "text", Text: p.Desc}},
+		[]Content{
+			Content{Tag: "text", Text: "描述:"},
+			Content{Tag: "text", Text: p.Desc},
+		},
 	)
 	data, err := json.Marshal(&s)
 	if err != nil {
