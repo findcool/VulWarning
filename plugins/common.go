@@ -10,6 +10,8 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"regexp"
+	"strings"
 	"sync"
 	"time"
 
@@ -17,6 +19,9 @@ import (
 	"github.com/virink/vulwarning/common"
 	"github.com/virink/vulwarning/model"
 )
+
+// TODO: libURL
+const libURL = "http://xxxxxx"
 
 var tr *http.Transport
 
@@ -57,6 +62,9 @@ func translate(text string, lang ...string) string {
 	var resp TranslateResp
 	if err = json.Unmarshal(data, &resp); err != nil {
 		common.Logger.Errorln(err)
+		return text
+	}
+	if strings.Contains(resp.ResponseData.TranslatedText, "QUERY LENGTH LIMIT EXCEDEED") {
 		return text
 	}
 	return resp.ResponseData.TranslatedText
@@ -143,33 +151,69 @@ func httpPostJSON(target string, data []byte) (err error) {
 }
 
 // PusherMessage -
-func PusherMessage(p *model.PushData) {
+func PusherMessage(p *model.PushDataV2) {
 	var wg = &sync.WaitGroup{}
-	wg.Add(4)
-	go PushToFeishu(wg, p)
+	wg.Add(3)
 	go PushToFeishuV2(wg, p)
 	go PushToQiwei(wg, p)
 	go PushToDingding(wg, p)
 	wg.Wait()
 }
 
-func makePushMessage(w *model.Warning) (p *model.PushData) {
-	p = &model.PushData{
+func makePushMessage(w *model.Warning) (p *model.PushDataV2) {
+	p = &model.PushDataV2{
+		From:  w.From,
+		Link:  w.Link,
 		Title: w.Title,
-		Text: fmt.Sprintf(
-			"%s\n\nTime : %v\nUrl  : %s  \nFrom : %s  ",
-			w.Desc,
-			w.Time.Format("2006-01-02 15:04:05"),
-			w.Link,
-			w.From,
-		),
+		Desc:  w.Desc,
+		CVE:   w.CVE,
+		CVES:  w.CVES,
+		CVSS:  w.CVSS,
+		Time:  w.Time.Format("2006-01-02 15:04:05"),
 	}
 	common.Logger.Debugln(p)
 	return
 }
 
+// CrawlCVE -
+func CrawlCVE(cve string) (CVSS string, DESC string) {
+	// target := fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", cve)
+	c := newCustomCollector([]string{"nvd.nist.gov"})
+	c.OnRequest(func(r *colly.Request) {
+		common.Logger.Debugln("Crawling [CVEDetail]", r.URL)
+	})
+	c.OnHTML("p[data-testid=vuln-description]", func(e *colly.HTMLElement) {
+		DESC = e.Text
+	})
+	c.OnHTML("a[data-testid=vuln-cvss3-panel-score]", func(e *colly.HTMLElement) {
+		CVSS = e.Text
+	})
+	c.Visit(fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", cve))
+	c.Wait()
+	return
+}
+
+// GetCVE -
+func GetCVE(text string) (CVE string) {
+	match := regexp.MustCompile(`(?mi)cve-?\s?(\d{4})-?(\d+)`).FindAllStringSubmatch(text, -1)
+	if len(match) > 0 && len(match[0]) > 2 {
+		CVE = fmt.Sprintf("CVE-%s-%s", match[0][1], match[0][2])
+	}
+	return
+}
+
+// GetCVEDetail -
+func GetCVEDetail(CVE string) (CVSS, Detail string) {
+	CVSS, Detail = CrawlCVE(CVE)
+	if len(Detail) > 0 {
+		Detail = translate(Detail)
+	}
+	return
+}
+
 // DoJob -
 func DoJob(push bool) {
+	model.RefreshLib()
 	for _, pn := range GetPlugins() {
 		p := PluginFactry(pn)
 		err := p.Crawl()
@@ -178,6 +222,25 @@ func DoJob(push bool) {
 			continue
 		}
 		for _, warn := range p.Result() {
+			// Is Exists
+			if model.WarningIsExistsByLink(warn.Link) {
+				continue
+			}
+			// Get CVE Detail
+			CVE := GetCVE(fmt.Sprintf("%s %s", warn.Title, warn.Desc))
+			if len(CVE) > 0 {
+				if w, ok := model.FindWarningByCVE(CVE); ok {
+					warn.CVE = CVE
+					warn.CVES = w.CVES
+					warn.CVSS = w.CVSS
+				} else {
+					CVSS, CVES := GetCVEDetail(CVE)
+					warn.CVE = CVE
+					warn.CVES = CVES
+					warn.CVSS = CVSS
+				}
+			}
+			warn.Title = strings.ReplaceAll(warn.Title, "{CVE}", CVE)
 			if model.AddWarning(warn) {
 				if push {
 					PusherMessage(makePushMessage(warn))

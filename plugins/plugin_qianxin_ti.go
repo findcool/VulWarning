@@ -40,6 +40,7 @@ func (p *PluginQianxinTi) Crawl() error {
 			_time = _time[:10]
 		}
 		desc := e.ChildText("div.text-box > div.brief")
+		// CVE, CVSS, DESC := GetCVE(desc)
 		p.res = append(p.res, &model.Warning{
 			Title:    title,
 			Link:     fmt.Sprintf(`%s?404=%s`, e.Request.URL.String(), MD5(title)),
@@ -47,6 +48,9 @@ func (p *PluginQianxinTi) Crawl() error {
 			From:     "qianxin_ti",
 			Time:     getTime("2006-01-02", _time),
 			CreateAt: time.Now(),
+			// CVE:      CVE,
+			// CVSS:     CVSS,
+			// CVES:     DESC,
 		})
 		common.Logger.Debugln("Crwaled [QianxinTI]", title, _time)
 	})

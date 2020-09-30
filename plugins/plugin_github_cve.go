@@ -3,10 +3,8 @@ package plugins
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 	"time"
 
-	"github.com/gocolly/colly"
 	"github.com/virink/vulwarning/common"
 	"github.com/virink/vulwarning/model"
 )
@@ -40,26 +38,6 @@ func (p *PluginGithubCVE) Result() []*model.Warning {
 	return p.res
 }
 
-// CrawlCVE -
-func (p *PluginGithubCVE) CrawlCVE(cve string) (CVSS string, DESC string) {
-	// target := fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", cve)
-	c := newCustomCollector([]string{"nvd.nist.gov"})
-	c.OnRequest(func(r *colly.Request) {
-		common.Logger.Debugln("Crawling [CVEDetail]", r.URL)
-	})
-	c.OnHTML("p[data-testid=vuln-description]", func(e *colly.HTMLElement) {
-		common.Logger.Debugln("Crawling [CVEDetail]", e.Text)
-		DESC = e.Text
-	})
-	c.OnHTML("a[data-testid=vuln-cvss3-panel-score]", func(e *colly.HTMLElement) {
-		common.Logger.Debugln("Crawling [CVEDetail]", e.Text)
-		CVSS = e.Text
-	})
-	c.Visit(fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", cve))
-	c.Wait()
-	return
-}
-
 // Crawl -
 func (p *PluginGithubCVE) Crawl() error {
 	target := fmt.Sprintf(
@@ -76,35 +54,11 @@ func (p *PluginGithubCVE) Crawl() error {
 		return err
 	}
 	for _, item := range gsr.Items {
-		var CVE, CVSS, DESC string
-		// Is Exists
-		if model.WarningIsExistsByLink(item.SvnURL) {
-			continue
-		}
-		// Get CVE Detail
-		text := fmt.Sprintf("%s %s", item.FullName, item.Description)
-		match := regexp.MustCompile(`(?mi)cve-?\s?(\d{4})-?(\d+)`).FindAllStringSubmatch(text, -1)
-		if len(match) > 0 && len(match[0]) > 2 {
-			CVE = fmt.Sprintf("CVE-%s-%s", match[0][1], match[0][2])
-			CVSS, DESC = p.CrawlCVE(CVE)
-			if len(DESC) > 0 {
-				DESC = translate(DESC)
-			}
-		}
-		text = fmt.Sprintf(
-			"名称: %s\n描述: %s\n编号: %s\n等级: %s\n说明: %s",
-			item.FullName,
-			item.Description,
-			CVE,
-			CVSS,
-			DESC,
-		)
 		p.res = append(p.res, &model.Warning{
-			Title:    fmt.Sprintf("Found [%s] on GitHub", CVE),
+			Title:    "Found [{CVE}] on GitHub",
 			Link:     item.SvnURL,
-			Index:    item.SvnURL,
 			From:     "githubcve",
-			Desc:     text,
+			Desc:     item.Description,
 			Time:     time.Unix(ParsePubDate(item.UpdatedAt), 0),
 			CreateAt: time.Now(),
 		})

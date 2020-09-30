@@ -21,7 +21,6 @@ type Config struct {
 		Qiwei        string `yaml:"qiwei"`
 		Dingding     string `yaml:"dingding"`
 		DingdingSign string `yaml:"dingding_sign"`
-		Feishu       string `yaml:"feishu"`
 		FeishuV2     string `yaml:"feishu_v2"`
 		Custom       string `yaml:"custom"`
 	} `yaml:"pusher"`
@@ -43,7 +42,7 @@ func TemplateConfig() []byte {
 
 	conf.Pusher.Qiwei = "693axxx6-7aoc-4bc4-97a0-xxxxxxxxxxxx"
 	conf.Pusher.Dingding = "fb9b5f1a04ac4305a7da1axxxxxxxxxx"
-	conf.Pusher.Feishu = "fb9b5f1a04ac4305a7da1axxxxxxxxxx"
+	conf.Pusher.FeishuV2 = "fb9b5f1a04ac4305a7da1axxxxxxxxxx"
 
 	conf.Server.Debug = true
 	conf.Server.Spec = "*/10 * * * *"

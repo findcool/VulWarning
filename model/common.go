@@ -47,6 +47,10 @@ type Resp struct {
 
 // InitTable -
 func InitTable() error {
-	// NOTE: Drop if exists ?
-	return db.CreateTable(&Warning{}).Error
+	if db.HasTable(&Warning{}) {
+		db.AutoMigrate(&Warning{})
+	} else {
+		db.CreateTable(&Warning{})
+	}
+	return nil
 }

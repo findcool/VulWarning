@@ -38,6 +38,10 @@ func (p *PluginAliyun) Crawl() error {
 				for _, w := range p.res {
 					if w.Link == e.Request.URL.String() {
 						w.Desc = ee.Text
+						// CVE, CVSS, DESC := GetCVE(w.Desc)
+						// w.CVE = CVE
+						// w.CVSS = CVSS
+						// w.CVES = DESC
 						break
 					}
 				}

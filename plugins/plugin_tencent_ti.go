@@ -38,7 +38,7 @@ func (p *PluginTencentTi) Crawl() error {
 				desc = ex.ChildText("div")
 			}
 		})
-
+		// CVE, CVSS, DESC := GetCVE(desc)
 		p.res = append(p.res, &model.Warning{
 			Title:    title,
 			Link:     e.Request.URL.String(),
@@ -46,6 +46,9 @@ func (p *PluginTencentTi) Crawl() error {
 			Desc:     desc,
 			Time:     getTime("2006-01-02 15:04:05", _time),
 			CreateAt: time.Now(),
+			// CVE:      CVE,
+			// CVSS:     CVSS,
+			// CVES:     DESC,
 		})
 	})
 
