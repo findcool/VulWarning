@@ -122,6 +122,11 @@ func baseInit() (string, error) {
 	if _, err = model.InitConnect(config, common.DebugMode); err != nil {
 		return "Connect Database", err
 	}
+
+	if config.Server.Migrate {
+		model.AutoMigrate()
+	}
+
 	return "", nil
 }
 
@@ -133,9 +138,6 @@ func initDb() (string, error) {
 
 	// Init Database
 	model.InitTable()
-	// if err = model.InitTable(); err != nil && {
-	// 	return "Init Table", err
-	// }
 
 	logger.Println("Crawl Vul But not push message in first time")
 	plugins.DoJob(false)
@@ -151,19 +153,6 @@ func serviceDaemon() (string, error) {
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
-
-	// if common.DebugMode {
-
-	// 	// 	p := &model.PushData{
-	// 	// 		Title: "test",
-	// 	// 		Text:  "just for test\npusher",
-	// 	// 	}
-	// 	// 	plugins.PusherMessage(p)
-
-	// 	plugins.DoJob(false)
-
-	// 	return "Finish Debug", nil
-	// }
 
 	c := cron.New()
 	c.AddFunc(config.Server.Spec, func() {

@@ -48,39 +48,37 @@ func newFeishuDataV2(p *model.PushDataV2) []byte {
 			})
 		}
 	}
-	// From:  p.From,
-	// Link:  p.Link,
-	// Desc:  p.Desc,
-	// CVE:   p.CVE,
-	// CVES:  p.CVES,
-	// CVSS:  p.CVSS,
-	// Time:  p.Time,
 	s.Content.Post.ZhCn.Title = p.Title
 	s.Content.Post.ZhCn.Content = [][]Content{
 		[]Content{
 			Content{Tag: "text", Text: fmt.Sprintf(`来源: %s`, p.From)},
 		},
 		[]Content{
-			Content{Tag: "text", Text: "编号: "},
-			Content{Tag: "a", Text: p.CVE, Href: fmt.Sprintf(`https://nvd.nist.gov/vuln/detail/%s`, p.CVE)},
-		},
-		[]Content{
-			Content{Tag: "text", Text: fmt.Sprintf(`等级: %s`, p.CVSS)},
-		},
-		[]Content{
-			Content{Tag: "text", Text: fmt.Sprintf(`说明: %s`, p.CVES)},
-		},
-		[]Content{
 			Content{Tag: "text", Text: fmt.Sprintf(`时间: %s`, p.Time)},
 		},
-		[]Content{
-			Content{Tag: "a", Text: "查看详情", Href: p.Link},
-		},
+	}
+
+	common.Logger.Debugln(p.CVE)
+	if len(p.CVE) > 3 {
+		s.Content.Post.ZhCn.Content = append(s.Content.Post.ZhCn.Content,
+			[]Content{
+				Content{Tag: "text", Text: "编号: "},
+				Content{Tag: "a", Text: p.CVE, Href: fmt.Sprintf(`https://nvd.nist.gov/vuln/detail/%s`, p.CVE)},
+			},
+			[]Content{Content{Tag: "text", Text: fmt.Sprintf(`等级: %s`, p.CVSS)}},
+			[]Content{Content{Tag: "text", Text: fmt.Sprintf(`说明: %s`, p.CVES)}},
+		)
 	}
 	if len(foundLibs) > 0 {
 		s.Content.Post.ZhCn.Content = append(s.Content.Post.ZhCn.Content, foundLibs)
 	}
-	s.Content.Post.ZhCn.Content = append(s.Content.Post.ZhCn.Content, []Content{Content{Tag: "text", Text: p.Desc}})
+	s.Content.Post.ZhCn.Content = append(s.Content.Post.ZhCn.Content,
+		[]Content{
+			Content{Tag: "text", Text: "详情:"},
+			Content{Tag: "a", Text: "点击查看", Href: p.Link},
+		},
+		[]Content{Content{Tag: "text", Text: p.Desc}},
+	)
 	data, err := json.Marshal(&s)
 	if err != nil {
 		common.Logger.Errorln(err)

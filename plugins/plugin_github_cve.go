@@ -55,7 +55,7 @@ func (p *PluginGithubCVE) Crawl() error {
 	}
 	for _, item := range gsr.Items {
 		p.res = append(p.res, &model.Warning{
-			Title:    "Found [{CVE}] on GitHub",
+			Title:    item.Name,
 			Link:     item.SvnURL,
 			From:     "githubcve",
 			Desc:     item.Description,

@@ -240,7 +240,9 @@ func DoJob(push bool) {
 					warn.CVSS = CVSS
 				}
 			}
-			warn.Title = strings.ReplaceAll(warn.Title, "{CVE}", CVE)
+			if warn.Title == CVE {
+				warn.Title = fmt.Sprintf("Found [%s] on GitHub", CVE)
+			}
 			if model.AddWarning(warn) {
 				if push {
 					PusherMessage(makePushMessage(warn))

@@ -45,6 +45,13 @@ type Resp struct {
 	Msg    string      `json:"msg"`
 }
 
+// AutoMigrate Auto Migrate By GORM
+func AutoMigrate() {
+	if db.HasTable(&Warning{}) {
+		db.AutoMigrate(&Warning{})
+	}
+}
+
 // InitTable -
 func InitTable() error {
 	if db.HasTable(&Warning{}) {

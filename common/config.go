@@ -25,8 +25,9 @@ type Config struct {
 		Custom       string `yaml:"custom"`
 	} `yaml:"pusher"`
 	Server struct {
-		Debug bool   `yaml:"debug"`
-		Spec  string `yaml:"spec"`
+		Migrate bool   `yaml:"migrate"`
+		Debug   bool   `yaml:"debug"`
+		Spec    string `yaml:"spec"`
 	} `yaml:"server"`
 }
 
@@ -45,6 +46,7 @@ func TemplateConfig() []byte {
 	conf.Pusher.FeishuV2 = "fb9b5f1a04ac4305a7da1axxxxxxxxxx"
 
 	conf.Server.Debug = true
+	conf.Server.Migrate = true
 	conf.Server.Spec = "*/10 * * * *"
 
 	// yamlData

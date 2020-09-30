@@ -58,8 +58,11 @@ func newDingdingData(p *model.PushDataV2) []byte {
 			desc = strings.ReplaceAll(desc, *name, fmt.Sprintf("[%s](%s/%s)", *name, libURL, *name))
 		}
 	}
-
-	s.Markdown.Text = fmt.Sprintf("**来源:** %s\n**编号:** https://nvd.nist.gov/vuln/detail/%s\n**等级:** %s\n**说明:** %s\n**时间:** %s\n[查看详情](%s)\n\n%s", p.From, p.CVE, p.CVSS, p.CVES, p.Time, p.Link, desc)
+	text := fmt.Sprintf("**来源:** %s\n**时间:** %s\n", p.From, p.Time)
+	if len(p.CVE) > 3 {
+		text = fmt.Sprintf("%s**编号:** https://nvd.nist.gov/vuln/detail/%s\n**等级:** %s\n**说明:** %s\n", text, p.CVE, p.CVSS, p.CVES)
+	}
+	s.Markdown.Text = fmt.Sprintf("%s**详情:**[点击查看](%s)\n\n**描述:**%s", text, p.Link, desc)
 	data, err := json.Marshal(&s)
 	if err != nil {
 		common.Logger.Errorln(err)
